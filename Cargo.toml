@@ -3,4 +3,6 @@ name = "auto-monitor"
 version = "0.1.0"
 authors = ["Gregory <gregory.mkv@gmail.com>"]
 
-[dependencies]
+[profile.release]
+opt-level=3
+lto=true
