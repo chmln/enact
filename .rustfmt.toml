@@ -1,0 +1,17 @@
+max_width = 80
+hard_tabs = false
+tab_spaces = 4
+newline_style = "Unix"
+indent_style = "Block"
+wrap_comments = true
+comment_width = 80
+format_strings = true
+merge_imports = true
+reorder_impl_items = true
+control_brace_style = "ClosingNextLine"
+trailing_semicolon = true
+match_block_trailing_comma = true
+blank_lines_upper_bound = 1
+merge_derives = true
+use_try_shorthand = true
+use_field_init_shorthand = true
