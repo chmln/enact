@@ -37,7 +37,8 @@ fn get_secondary_monitor() -> Option<Monitor> {
             let monitor_name = line.split_whitespace().nth(0)?;
 
             if let Some(resolution_line) = lines.next() {
-                let mut resolution = resolution_line.split_whitespace().nth(0)?.split("x");
+                let mut resolution =
+                    resolution_line.split_whitespace().nth(0)?.split("x");
 
                 return Some(Monitor {
                     width: resolution.nth(0)?.parse().expect("ParseError"),
@@ -56,8 +57,8 @@ fn main() {
 
     if let Some(secondary_monitor) = get_secondary_monitor() {
         let xrandr_args = format!(
-            "--output {} --mode {} --pos 0x0 \
-             --output {} --primary --mode {} --pos {}x{}",
+            "--output {} --mode {} --pos 0x0 --output {} --primary --mode {} \
+             --pos {}x{}",
             secondary_monitor.name,
             secondary_monitor.resolution(),
             primary_monitor.name,
@@ -67,7 +68,8 @@ fn main() {
         );
 
         cmd.args(xrandr_args.split_whitespace());
-    } else {
+    }
+    else {
         cmd.args(&["--output", &primary_monitor.name])
             .args(&["--mode", &primary_monitor.resolution()])
             .args(&["--pos", "0x0"])
