@@ -24,10 +24,6 @@ impl Monitor {
     }
 }
 
-fn run_command(command: &mut Command) -> String {
-    String::from_utf8_lossy(&command.output().unwrap().stdout).into_owned()
-}
-
 struct Xrandr;
 
 impl Xrandr {
@@ -35,10 +31,16 @@ impl Xrandr {
         str.contains(" connected") 
     }
 
+    fn query() -> String {
+        let mut cmd = Command::new("xrandr");
+        let output = &cmd.arg("-q").output().unwrap().stdout;
+        String::from_utf8_lossy(output).into_owned()
+    }
+
     fn get_monitors() -> Vec<Monitor> {
         let mut monitors = Vec::new();
 
-        let xrandr = run_command(Command::new("xrandr").arg("-q"));
+        let xrandr = Self::query();
         let mut lines = xrandr.lines();
 
         while let Some(line) = lines.next() {
