@@ -8,6 +8,10 @@ Use cases:
 - a laptop and an abritrary secondary monitor (e.g. at work, home, etc.)
 - a desktop with two monitors
 
+## Install
+
+Download the binary from [releases](https://github.com/chmln/enact) or install via cargo: `cargo install --git https://github.com/chmln/enact`
+
 ## Usage
 
 Test it out then place this in your `.xinitrc`.
