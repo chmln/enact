@@ -13,9 +13,12 @@ Use cases:
 Test it out then place this in your `.xinitrc`.
 
 ```sh
-# Set up second monitor above laptop and exit
+# Set up second monitor above laptop 
 enact --pos top
+```
 
-# Do the same, but watch for changes and allow hotplugging
-enact --pos top --watch
+Or to do the same, but also watch for changes and allow hotplugging
+
+```sh
+enact --pos top --watch &
 ```
