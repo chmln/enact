@@ -38,6 +38,6 @@ Pros:
 Drawbacks:
 - Supports up to two displays max (at least currently)
 
-#### Icon Attribution
+## Icon Attribution
 
 [“Monitor”](https://www.iconfinder.com/icons/4064140/computer_hardware_monitor_screen_technology_icon) by [icon lauk](https://www.iconfinder.com/andhikairfani), licensed under CC BY 3.0. 
