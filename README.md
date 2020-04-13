@@ -26,3 +26,13 @@ Or to do the same, but also watch for changes and allow hotplugging
 ```sh
 enact --pos top --watch &
 ```
+
+## Comparison With Similar Tools
+
+Pros:
+- monitor hotplugging that actually works (never got this to work with autorandr or any other tool)
+- no need to setup any "profiles" or configuration, it just works
+- Single compiled binary, no dependencies on python or anything else apart from `xrandr`
+
+Drawbacks:
+- Supports up to two displays max (at least currently)
