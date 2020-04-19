@@ -11,7 +11,7 @@ Use cases:
 
 ## Install
 
-Download the binary from [releases](https://github.com/chmln/enact) or install via cargo: `cargo install --git https://github.com/chmln/enact`
+Download the binary from [releases](https://github.com/chmln/enact/releases) or install via cargo: `cargo install --git https://github.com/chmln/enact`
 
 ## Usage
 
