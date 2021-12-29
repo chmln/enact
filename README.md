@@ -18,7 +18,7 @@ Download the binary from [releases](https://github.com/chmln/enact/releases) or 
 Test it out then place this in your `.xinitrc`.
 
 ```sh
-# Set up second monitor above laptop 
+# Set up second monitor above laptop
 enact --pos top
 ```
 
@@ -26,6 +26,12 @@ Or to do the same, but also watch for changes and allow hotplugging
 
 ```sh
 enact --pos top --watch &
+```
+
+You can also select which monitor will be the new primary one
+
+```sh
+enact --pos top --new_primary 1
 ```
 
 ## Comparison With Similar Tools
@@ -40,4 +46,4 @@ Drawbacks:
 
 ## Icon Attribution
 
-[“Monitor”](https://www.iconfinder.com/icons/4064140/computer_hardware_monitor_screen_technology_icon) by [icon lauk](https://www.iconfinder.com/andhikairfani), licensed under CC BY 3.0. 
+[“Monitor”](https://www.iconfinder.com/icons/4064140/computer_hardware_monitor_screen_technology_icon) by [icon lauk](https://www.iconfinder.com/andhikairfani), licensed under CC BY 3.0.

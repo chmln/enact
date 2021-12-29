@@ -26,7 +26,11 @@ impl Monitor {
 }
 
 #[derive(PartialEq, Eq)]
-struct Xrandr(Vec<Monitor>, Placement);
+struct Xrandr {
+    monitors: Vec<Monitor>,
+    placement: Placement,
+    new_primary: usize,
+}
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Placement {
@@ -85,7 +89,7 @@ impl Rect {
 }
 
 impl Xrandr {
-    fn new(placement: Placement) -> Result<Self> {
+    fn new(placement: Placement, new_primary: usize) -> Result<Self> {
         use itertools::Itertools;
 
         let monitors = String::from_utf8(
@@ -108,18 +112,18 @@ impl Xrandr {
             .filter_map(|mut l| Monitor::from_line(&l.next()?, &l.next()?))
             .collect::<Vec<Monitor>>();
 
-        Ok(Self(monitors, placement))
+        Ok(Self { monitors, placement, new_primary })
     }
 
     fn get_rect(&self) -> Rect {
-        let (width, height) = match self.1 {
+        let (width, height) = match self.placement {
             Placement::Top | Placement::Bottom => (
-                self.0.iter().map(|m| m.width).max().unwrap(),
-                self.0.iter().map(|m| m.height).sum::<i32>(),
+                self.monitors.iter().map(|m| m.width).max().unwrap(),
+                self.monitors.iter().map(|m| m.height).sum::<i32>(),
             ),
             _ => (
-                self.0.iter().map(|m| m.width).sum::<i32>(),
-                self.0.iter().map(|m| m.height).max().unwrap(),
+                self.monitors.iter().map(|m| m.width).sum::<i32>(),
+                self.monitors.iter().map(|m| m.height).max().unwrap(),
             ),
         };
         Rect { width, height }
@@ -129,19 +133,23 @@ impl Xrandr {
         let rect = self.get_rect();
         let mut cmd = Command::new("/usr/bin/xrandr");
 
-        for (i, monitor) in self.0.iter().enumerate() {
+        for (i, monitor) in self.monitors.iter().enumerate() {
             cmd.args(&["--output", &monitor.name])
                 .args(&["--mode", &monitor.resolution()])
                 .arg("--pos");
 
             if i == 0 {
-                cmd.arg(&rect.place(monitor, &self.1.invert()));
-                cmd.arg("--primary");
+                cmd.arg(&rect.place(monitor, &self.placement.invert()));
             } else {
-                cmd.arg(&rect.place(monitor, &self.1));
+                cmd.arg(&rect.place(monitor, &self.placement));
+            }
+
+            if self.new_primary == i {
+                cmd.arg("--primary");
             }
         }
-        dbg!(&cmd);
+
+        log::info!("Command: {:?}", &cmd);
 
         if cmd.status()?.success() {
             Ok(())
@@ -163,6 +171,9 @@ struct Enact {
     #[structopt(short, long)]
     /// Where to place the second monitor: top, bottom, left, right
     pos: Placement,
+    #[structopt(short, long, default_value = "0")]
+    /// Which monitor is the new primary
+    new_primary: usize,
 }
 
 fn main() -> Result<()> {
@@ -170,18 +181,18 @@ fn main() -> Result<()> {
     use structopt::StructOpt;
     let args = Enact::from_args();
 
-    let mut prev = Xrandr::new(args.pos)?;
+    let mut prev = Xrandr::new(args.pos, args.new_primary)?;
 
     if args.watch {
         loop {
-            let monitors = Xrandr::new(args.pos)?;
+            let monitors = Xrandr::new(args.pos, args.new_primary)?;
             if prev != monitors {
-                log::info!("Applying: {:?}", &monitors.0);
+                log::info!("Applying: {:?}", &monitors.monitors);
                 monitors.setup()?;
 
-                prev.0
+                prev.monitors
                     .iter()
-                    .skip_while(|m| monitors.0.contains(m))
+                    .skip_while(|m| monitors.monitors.contains(m))
                     .for_each(|removed_monitor| {
                         let _ = Command::new("xrandr")
                             .args(&["--output", &removed_monitor.name, "--off"])
