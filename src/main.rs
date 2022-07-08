@@ -38,6 +38,7 @@ enum Placement {
     Bottom,
     Left,
     Right,
+    Clone,
 }
 
 impl Placement {
@@ -47,6 +48,7 @@ impl Placement {
             Self::Bottom => Self::Top,
             Self::Right => Self::Left,
             Self::Left => Self::Right,
+            Self::Clone => Self::Clone,
         }
     }
 }
@@ -60,6 +62,7 @@ impl std::str::FromStr for Placement {
             "bottom" => Ok(Self::Bottom),
             "left" => Ok(Self::Left),
             "right" => Ok(Self::Right),
+            "clone" => Ok(Self::Clone),
             _ => anyhow::bail!("Invalid placement"),
         }
     }
@@ -83,6 +86,7 @@ impl Rect {
                 self.width - monitor.width,
                 (self.height - monitor.height) / 2,
             ),
+            Placement::Clone => (0,0,),
         };
         format!("{}x{}", offset_width, offset_height)
     }
@@ -135,16 +139,17 @@ impl Xrandr {
 
         for (i, monitor) in self.monitors.iter().enumerate() {
             cmd.args(&["--output", &monitor.name])
-                .args(&["--mode", &monitor.resolution()])
-                .arg("--pos");
+                .args(&["--mode", &monitor.resolution()]);
 
             if i == 0 {
-                cmd.arg(&rect.place(monitor, &self.placement.invert()));
+                cmd.args(&["--pos", &rect.place(monitor, &self.placement.invert())]);
+            } else if self.placement == Placement::Clone {
+                cmd.args(&["--same-as", &self.monitors[0].name]);
             } else {
-                cmd.arg(&rect.place(monitor, &self.placement));
+                cmd.args(&["--pos", &rect.place(monitor, &self.placement)]);
             }
 
-            if self.new_primary == i {
+            if self.new_primary == i || self.monitors.len() == 1 {
                 cmd.arg("--primary");
             }
         }
