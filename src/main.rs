@@ -143,9 +143,14 @@ impl Xrandr {
             } else {
                 cmd.arg(&rect.place(monitor, &self.placement));
             }
-
-            if self.new_primary == i {
+            if self.monitors.len() == 1 {
                 cmd.arg("--primary");
+            }
+
+            else {
+                if self.new_primary == i {
+                    cmd.arg("--primary");
+                }
             }
         }
 
