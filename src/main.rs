@@ -25,12 +25,6 @@ impl Monitor {
     }
 }
 
-#[derive(PartialEq, Eq)]
-struct Xrandr {
-    monitors: Vec<Monitor>,
-    placement: Placement,
-    new_primary: usize,
-}
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Placement {
@@ -88,6 +82,12 @@ impl Rect {
     }
 }
 
+#[derive(PartialEq, Eq)]
+struct Xrandr {
+    monitors: Vec<Monitor>,
+    placement: Placement,
+    new_primary: usize,
+}
 impl Xrandr {
     fn new(placement: Placement, new_primary: usize) -> Result<Self> {
         use itertools::Itertools;
@@ -97,20 +97,33 @@ impl Xrandr {
         )?
         .lines()
         .map(ToOwned::to_owned)
-        .collect::<Vec<_>>();
+        .collect::<Vec<String>>();
 
-        let monitors = monitors
+
+        let mut monitors = monitors
             .iter()
             .enumerate()
+            // grab relevent lines from xrandr output.
             .filter(|(i, l)| {
+
+                // add lines that contain "connected".
                 l.contains(" connected")
+
+                    // add lines after line with "connected".
                     || (*i > 0 && monitors[*i - 1].contains(" connected"))
             })
             .map(|(_, l)| l)
             .chunks(2)
             .into_iter()
+
+            // separate monitor name from resolution.
             .filter_map(|mut l| Monitor::from_line(&l.next()?, &l.next()?))
             .collect::<Vec<Monitor>>();
+
+            // sort monitors by name to ensure that monitor number is always the same with the same
+            // setup.
+            monitors.sort_by_key(|monitor| monitor.name.clone());
+            println!("{:?}",monitors);
 
         Ok(Self { monitors, placement, new_primary })
     }
