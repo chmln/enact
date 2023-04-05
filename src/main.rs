@@ -123,7 +123,6 @@ impl Xrandr {
             // sort monitors by name to ensure that monitor number is always the same with the same
             // setup.
             monitors.sort_by_key(|monitor| monitor.name.clone());
-            println!("{:?}",monitors);
 
         Ok(Self { monitors, placement, new_primary })
     }
