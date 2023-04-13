@@ -6,7 +6,7 @@
 It uses `xrandr` under the hood and works great with window managers like i3, bspwm, and others.
 
 Use cases:
-- a laptop and an abritrary secondary monitor (e.g. at work, home, etc.)
+- a laptop and an arbitrary secondary monitor (e.g. at work, home, etc.)
 - a desktop with two monitors
 
 ## Install
@@ -31,7 +31,7 @@ enact --pos top --watch &
 You can also select which monitor will be the new primary one
 
 ```sh
-enact --pos top --new_primary 1
+enact --pos top --new-primary 1
 ```
 
 ## Comparison With Similar Tools
